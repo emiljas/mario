@@ -30,19 +30,25 @@ define(["require", "exports", "bluebird", "underscore"], function (require, expo
     var moveX = 0, moveY = 0;
     function handleMove(e) {
         e.preventDefault();
-        moveX = e.offsetX;
-        moveY = e.offsetY;
+        moveX = e.clientX;
+        moveY = e.clientY;
     }
     var hedgehogs = [];
     function handleUp() {
+        var s = Math.sqrt(Math.pow(moveX - wandX, 2) + Math.pow(moveY - wandY, 2));
+        var cos = Math.abs(moveX - wandX) / s;
+        var sin = Math.abs(moveY - wandY) / s;
         hedgehogs.push({
             x: moveX,
-            y: moveY
+            y: moveY,
+            cos: cos,
+            sin: sin
         });
     }
     canvas.addEventListener("touchmove", handleMove, false);
     canvas.addEventListener("mousemove", handleMove, false);
     canvas.addEventListener("mouseup", handleUp, false);
+    var wandX, wandY;
     var x = 800, y = 300;
     Promise.all(imagesPromises).then(function (result) {
         potter = result[0];
@@ -70,8 +76,8 @@ define(["require", "exports", "bluebird", "underscore"], function (require, expo
             ctx.drawImage(potter, (width - potter.width) / 2, height - potter.height);
             var wandXRelativeToPotter = -33;
             var wandYRelativeToPotter = -5;
-            var wandX = width / 2 + wandXRelativeToPotter;
-            var wandY = height - potter.height / 2 + wandYRelativeToPotter;
+            wandX = width / 2 + wandXRelativeToPotter;
+            wandY = height - potter.height / 2 + wandYRelativeToPotter;
             var laserLength = 100;
             function drawLaser() {
                 var s = Math.sqrt(Math.pow(moveX - wandX, 2) + Math.pow(moveY - wandY, 2));
@@ -104,11 +110,34 @@ define(["require", "exports", "bluebird", "underscore"], function (require, expo
                 ctx.stroke();
             }
             drawLaser();
-            x -= 3;
-            if (Math.floor(time / 250) % 2)
-                ctx.drawImage(hedgehog1, x, y, hedgehog1.width / 4, hedgehog2.height / 4);
-            else
-                ctx.drawImage(hedgehog2, x, y, hedgehog1.width / 4, hedgehog2.height / 4);
+            hedgehogs.forEach(function (hedgehog) {
+                var v = 200;
+                var laserLength = v * timeDiff / 1000;
+                var laserX, laserY;
+                if (hedgehog.x > wandX) {
+                    if (hedgehog.y > wandY) {
+                        laserX = hedgehog.cos * laserLength + hedgehog.x;
+                        laserY = hedgehog.sin * laserLength + hedgehog.y;
+                    }
+                    else {
+                        laserX = hedgehog.cos * laserLength + hedgehog.x;
+                        laserY = -hedgehog.sin * laserLength + hedgehog.y;
+                    }
+                }
+                else {
+                    if (hedgehog.y > wandY) {
+                        laserX = -hedgehog.cos * laserLength + hedgehog.x;
+                        laserY = hedgehog.sin * laserLength + hedgehog.y;
+                    }
+                    else {
+                        laserX = -hedgehog.cos * laserLength + hedgehog.x;
+                        laserY = -hedgehog.sin * laserLength + hedgehog.y;
+                    }
+                }
+                hedgehog.x = laserX;
+                hedgehog.y = laserY;
+                ctx.drawImage(hedgehog1, hedgehog.x, hedgehog.y, hedgehog1.width / 4, hedgehog2.height / 4);
+            });
             i++;
             oldTime = time;
             window.requestAnimationFrame(gameLoop);
