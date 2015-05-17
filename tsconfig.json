@@ -14,6 +14,7 @@
     ],
     "files": [
         "./scripts/Apple.ts",
+        "./scripts/Game.ts",
         "./scripts/Hedgehog.ts",
         "./scripts/ImageLoader.ts",
         "./scripts/config.ts",

@@ -2,6 +2,7 @@
 
 import Promise = require("bluebird");
 import Stats = require("Stats");
+import Game = require("./Game");
 import ImageLoader = require("./ImageLoader");
 import Apple = require("./Apple");
 import Hedgehog = require("./Hedgehog");
@@ -14,8 +15,13 @@ var $ = document.querySelector.bind(document);
 var canvas = <HTMLCanvasElement>$("#canvas");
 var ctx = canvas.getContext("2d");
 
+Game.ctx = ctx;
+
 var width = window.innerWidth;
 var height = window.innerHeight;
+
+Game.width = width;
+Game.height = height;
 
 canvas.width = width;
 canvas.height = height;
@@ -56,19 +62,13 @@ var borderMargin = 2.5;
 var borderLineWidth = 5;
 var borderColor = "red";
 
-var potter = new ImageLoader("assets/potter.png")
-var hedgehog1 = new ImageLoader("assets/hedgehog1.png");
-var hedgehog2 = new ImageLoader("assets/hedgehog2.png");
-var flyingHedgehog = new ImageLoader("assets/flyingHedgehog.png");
-var apple = new ImageLoader("assets/apple.png");
-
 ImageLoader.all([
-  potter, hedgehog1, hedgehog2,
-  flyingHedgehog, apple
+  Game.potter, Game.hedgehog1, Game.hedgehog2,
+  Game.flyingHedgehog, Game.apple
 ])
 .then((result) => {
   wandX = width / 2 + wandXRelativeToPotter;
-  wandY = height - potter.img.height / 2 + wandYRelativeToPotter;
+  wandY = height - Game.potter.img.height / 2 + wandYRelativeToPotter;
 
   randomApples();
 
@@ -80,13 +80,16 @@ var oldTime = 0;
 var laserX, laserY;
 
 function gameLoop(time) {
+  Game.time = time;
+
   var timeDiff = time - oldTime;
   var timeDiffInSeconds = timeDiff / 1000;
+  Game.timeDiffInSeconds = timeDiffInSeconds;
 
   ctx.fillStyle = "rgba(255, 255, 255, 0.0)";
   ctx.clearRect(0, 0, width, height);
 
-  ctx.drawImage(potter.img, (width - potter.img.width) / 2, height - potter.img.height);
+  ctx.drawImage(Game.potter.img, (width - Game.potter.img.width) / 2, height - Game.potter.img.height);
 
   var laserLength = 100;
 
@@ -111,43 +114,9 @@ function gameLoop(time) {
 
   hedgehogs.forEach((hedgehog) => {
     checkAppleIsTaken(hedgehog);
-
-    var hs = flyingHedgehog;
-
-    if(hedgehog.hasApple()) {
-      if(hedgehog.y < height - hedgehog1.img.height / 4) {
-        hedgehog.y += 9;
-        hedgehog.apple.y += 9;
-      }
-      else {
-        if(Math.floor(time / 200) % 2) {
-          hs = hedgehog1;
-        }
-        else {
-          hs = hedgehog2;
-        }
-
-        hedgehog.x -= 3;
-        hedgehog.apple.x -= 3;
-      }
-    }
-    else {
-      var v = 300;
-      var rotateRatio = 50;
-
-      var hedgehogFromWand = v * timeDiffInSeconds;
-      var hedgehogX = hedgehog.cos * hedgehogFromWand + hedgehog.x;
-      var headgehogY = hedgehog.sin * hedgehogFromWand + hedgehog.y;
-
-      hedgehog.x = hedgehogX;
-      hedgehog.y = headgehogY;
-    }
-
-    ctx.save();
-    ctx.translate(hedgehog.x, hedgehog.y);
-    ctx.rotate(time / rotateRatio);
-    ctx.drawImage(hs.img, -hs.img.width / 8, -hs.img.height / 8, hs.img.width / 4, hs.img.height / 4);
-    ctx.restore();
+    
+    hedgehog.move();
+    hedgehog.draw();
   });
 
   drawApples();
@@ -161,7 +130,7 @@ function checkAppleIsTaken(hedgehog) {
     if(!a.hasHedgehog()) {
       var diff = Math.sqrt(Math.pow(a.x - hedgehog.x, 2) + Math.pow(a.y - hedgehog.y, 2));
 
-      if(diff < apple.img.width / 8 + flyingHedgehog.img.width / 8) {
+      if(diff < Game.apple.img.width / 8 + Game.flyingHedgehog.img.width / 8) {
         hedgehog.apple = a;
         a.hedgehog = hedgehog;
         return false;
@@ -190,7 +159,7 @@ function drawApples() {
   apples.forEach((a) => {
     ctx.save();
     ctx.translate(a.x, a.y);
-    ctx.drawImage(apple.img, -apple.img.width / 8, -apple.img.height / 8, apple.img.width / 4, apple.img.height / 4);
+    ctx.drawImage(Game.apple.img, -Game.apple.img.width / 8, -Game.apple.img.height / 8, Game.apple.img.width / 4, Game.apple.img.height / 4);
     ctx.restore();
   });
 }
