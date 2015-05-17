@@ -1,0 +1,23 @@
+{
+    "version": "1.4.1",
+    "compilerOptions": {
+        "target": "es5",
+        "module": "amd",
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false
+    },
+    "filesGlob": [
+        "./**/*.ts",
+        "!./node_modules/**/*.ts"
+    ],
+    "files": [
+        "./scripts/config.ts",
+        "./scripts/main.ts",
+        "./typings/bluebird/bluebird.d.ts",
+        "./typings/requirejs/require.d.ts",
+        "./typings/tsd.d.ts",
+        "./typings/underscore/underscore.d.ts"
+    ]
+}
