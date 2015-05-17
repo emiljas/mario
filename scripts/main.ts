@@ -1,8 +1,14 @@
 /// </// <reference path="../typings/Stats.d.ts"/>
 
 import Promise = require("bluebird");
-import _ = require("underscore");
 import Stats = require("Stats");
+import ImageLoader = require("./ImageLoader");
+import Apple = require("./Apple");
+import Hedgehog = require("./Hedgehog");
+
+window.onerror = function(e) {
+  alert(e);
+};
 
 var $ = document.querySelector.bind(document);
 var canvas = <HTMLCanvasElement>$("#canvas");
@@ -14,16 +20,6 @@ var height = window.innerHeight;
 canvas.width = width;
 canvas.height = height;
 
-function gettingImage(url): Promise<HTMLImageElement> {
-  return new Promise<HTMLImageElement>((resolve: (HTMLImageElement) => void) => {
-    var img = new Image();
-    img.src = url;
-    img.addEventListener("load", () => {
-      resolve(img);
-    }, false);
-  });
-}
-
 var moveX = 0, moveY = 0;
 
 function handleMove(e) {
@@ -32,7 +28,7 @@ function handleMove(e) {
   moveY = e.clientY;
 }
 
-var hedgehogs = []
+var hedgehogs = new Array<Hedgehog>();
 
 function handleUp() {
   var s = Math.sqrt(Math.pow(moveX - wandX, 2) + Math.pow(moveY - wandY, 2));
@@ -40,12 +36,12 @@ function handleUp() {
   var cos = (moveX - wandX) / s;
   var sin = (moveY - wandY) / s;
 
-  hedgehogs.push({
-    x: laserX,
-    y: laserY,
-    cos: cos,
-    sin: sin
-  });
+  var hedgehod = new Hedgehog();
+  hedgehod.x = laserX;
+  hedgehod.y = laserY;
+  hedgehod.cos = cos;
+  hedgehod.sin = sin;
+  hedgehogs.push(hedgehod);
 }
 
 canvas.addEventListener("touchmove", handleMove, false);
@@ -59,45 +55,22 @@ var wandX, wandY;
 var borderMargin = 2.5;
 var borderLineWidth = 5;
 var borderColor = "red";
-// function drawBorder() {
-//   ctx.lineWidth = borderLineWidth;
-//   ctx.strokeStyle = borderColor;
-//   ctx.moveTo(borderMargin, borderMargin);
-//   ctx.lineTo(width - borderMargin, borderMargin);
-//   ctx.lineTo(width - borderMargin, height - borderMargin);
-//   ctx.lineTo(borderMargin, height - borderMargin);
-//   ctx.lineTo(borderMargin, borderMargin - borderLineWidth / 2);
-//   ctx.stroke();
-// }
 
-var potter: HTMLImageElement;
-var hedgehog1: HTMLImageElement;
-var hedgehog2: HTMLImageElement;
-var flyingHedgehog: HTMLImageElement;
-var trees: HTMLImageElement;
+var potter = new ImageLoader("assets/potter.png")
+var hedgehog1 = new ImageLoader("assets/hedgehog1.png");
+var hedgehog2 = new ImageLoader("assets/hedgehog2.png");
+var flyingHedgehog = new ImageLoader("assets/flyingHedgehog.png");
+var apple = new ImageLoader("assets/apple.png");
 
-var images = [
-  "assets/potter.png",
-  "assets/hedgehog1.png",
-  "assets/hedgehog2.png",
-  "assets/flyingHedgehog.png",
-  "assets/trees.jpg"
-];
-
-var imagesPromises = _.map(images, (url) => {
-  return gettingImage(url);
-});
-
-Promise.all(imagesPromises)
+ImageLoader.all([
+  potter, hedgehog1, hedgehog2,
+  flyingHedgehog, apple
+])
 .then((result) => {
-  potter = result[0];
-  hedgehog1 = result[1];
-  hedgehog2 = result[2];
-  flyingHedgehog = result[3];
-  trees = result[4];
-
   wandX = width / 2 + wandXRelativeToPotter;
-  wandY = height - potter.height / 2 + wandYRelativeToPotter;
+  wandY = height - potter.img.height / 2 + wandYRelativeToPotter;
+
+  randomApples();
 
   window.requestAnimationFrame(gameLoop);
 });
@@ -108,12 +81,12 @@ var laserX, laserY;
 
 function gameLoop(time) {
   var timeDiff = time - oldTime;
+  var timeDiffInSeconds = timeDiff / 1000;
 
-  ctx.drawImage(trees, 0, 0, width, height)
+  ctx.fillStyle = "rgba(255, 255, 255, 0.0)";
+  ctx.clearRect(0, 0, width, height);
 
-  // drawBorder();
-
-  ctx.drawImage(potter, (width - potter.width) / 2, height - potter.height);
+  ctx.drawImage(potter.img, (width - potter.img.width) / 2, height - potter.img.height);
 
   var laserLength = 100;
 
@@ -137,28 +110,89 @@ function gameLoop(time) {
   drawLaser();
 
   hedgehogs.forEach((hedgehog) => {
-    var v = 300;
-    var rotateRatio = 50;
+    checkAppleIsTaken(hedgehog);
 
-    var laserLength = v * timeDiff / 1000;
+    var hs = flyingHedgehog;
 
-    var laserX, laserY;
+    if(hedgehog.hasApple()) {
+      if(hedgehog.y < height - hedgehog1.img.height / 4) {
+        hedgehog.y += 9;
+        hedgehog.apple.y += 9;
+      }
+      else {
+        if(Math.floor(time / 200) % 2) {
+          hs = hedgehog1;
+        }
+        else {
+          hs = hedgehog2;
+        }
 
-    laserX = hedgehog.cos * laserLength + hedgehog.x;
-    laserY = hedgehog.sin * laserLength + hedgehog.y;
+        hedgehog.x -= 3;
+        hedgehog.apple.x -= 3;
+      }
+    }
+    else {
+      var v = 300;
+      var rotateRatio = 50;
 
-    hedgehog.x = laserX;
-    hedgehog.y = laserY;
+      var hedgehogFromWand = v * timeDiffInSeconds;
+      var hedgehogX = hedgehog.cos * hedgehogFromWand + hedgehog.x;
+      var headgehogY = hedgehog.sin * hedgehogFromWand + hedgehog.y;
+
+      hedgehog.x = hedgehogX;
+      hedgehog.y = headgehogY;
+    }
 
     ctx.save();
     ctx.translate(hedgehog.x, hedgehog.y);
     ctx.rotate(time / rotateRatio);
-    ctx.drawImage(flyingHedgehog, -flyingHedgehog.width / 8, -flyingHedgehog.height / 8, flyingHedgehog.width / 4, flyingHedgehog.height / 4);
+    ctx.drawImage(hs.img, -hs.img.width / 8, -hs.img.height / 8, hs.img.width / 4, hs.img.height / 4);
     ctx.restore();
   });
 
+  drawApples();
+
   oldTime = time;
   window.requestAnimationFrame(gameLoop);
+}
+
+function checkAppleIsTaken(hedgehog) {
+  apples.every((a, index) => {
+    if(!a.hasHedgehog()) {
+      var diff = Math.sqrt(Math.pow(a.x - hedgehog.x, 2) + Math.pow(a.y - hedgehog.y, 2));
+
+      if(diff < apple.img.width / 8 + flyingHedgehog.img.width / 8) {
+        hedgehog.apple = a;
+        a.hedgehog = hedgehog;
+        return false;
+      }
+    }
+
+    return true;
+  });
+}
+
+var apples = new Array<Apple>();
+
+function randomApples(): void {
+  for(var i = 0; i < 10; i++) {
+    var randomX = Math.random() * width;
+    var randomY = Math.random() * height / 3;
+
+    var apple = new Apple();
+    apple.x = randomX;
+    apple.y = randomY;
+    apples.push(apple);
+  }
+}
+
+function drawApples() {
+  apples.forEach((a) => {
+    ctx.save();
+    ctx.translate(a.x, a.y);
+    ctx.drawImage(apple.img, -apple.img.width / 8, -apple.img.height / 8, apple.img.width / 4, apple.img.height / 4);
+    ctx.restore();
+  });
 }
 
 var stats = new Stats();

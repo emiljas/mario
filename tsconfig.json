@@ -13,9 +13,12 @@
         "!./node_modules/**/*.ts"
     ],
     "files": [
+        "./scripts/Apple.ts",
+        "./scripts/Hedgehog.ts",
+        "./scripts/ImageLoader.ts",
         "./scripts/config.ts",
         "./scripts/main.ts",
-        "./t.d.ts",
+        "./typings/Stats.d.ts",
         "./typings/bluebird/bluebird.d.ts",
         "./typings/requirejs/require.d.ts",
         "./typings/stats/stats.d.ts",
