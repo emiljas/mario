@@ -15,8 +15,10 @@
     "files": [
         "./scripts/config.ts",
         "./scripts/main.ts",
+        "./t.d.ts",
         "./typings/bluebird/bluebird.d.ts",
         "./typings/requirejs/require.d.ts",
+        "./typings/stats/stats.d.ts",
         "./typings/tsd.d.ts",
         "./typings/underscore/underscore.d.ts"
     ]
