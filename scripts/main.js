@@ -67,6 +67,8 @@ define(["require", "exports", "Stats", "./Game", "./ImageLoader", "./Apple", "./
             var sin = (moveY - wandY) / s;
             laserX = cos * laserLength + wandX;
             laserY = sin * laserLength + wandY;
+            Game.laserX = laserX;
+            Game.laserY = laserY;
             ctx.lineWidth = borderLineWidth;
             ctx.strokeStyle = borderColor;
             ctx.beginPath();
@@ -80,17 +82,19 @@ define(["require", "exports", "Stats", "./Game", "./ImageLoader", "./Apple", "./
             hedgehog.move();
             hedgehog.draw();
         });
-        drawApples();
+        apples.forEach(function (apple) {
+            apple.draw();
+        });
         oldTime = time;
         window.requestAnimationFrame(gameLoop);
     }
     function checkAppleIsTaken(hedgehog) {
-        apples.every(function (a, index) {
-            if (!a.hasHedgehog()) {
-                var diff = Math.sqrt(Math.pow(a.x - hedgehog.x, 2) + Math.pow(a.y - hedgehog.y, 2));
+        apples.every(function (apple, index) {
+            if (!apple.hasHedgehog()) {
+                var diff = Math.sqrt(Math.pow(apple.x - hedgehog.x, 2) + Math.pow(apple.y - hedgehog.y, 2));
                 if (diff < Game.apple.img.width / 8 + Game.flyingHedgehog.img.width / 8) {
-                    hedgehog.apple = a;
-                    a.hedgehog = hedgehog;
+                    hedgehog.apple = apple;
+                    apple.hedgehog = hedgehog;
                     return false;
                 }
             }
@@ -107,14 +111,6 @@ define(["require", "exports", "Stats", "./Game", "./ImageLoader", "./Apple", "./
             apple.y = randomY;
             apples.push(apple);
         }
-    }
-    function drawApples() {
-        apples.forEach(function (a) {
-            ctx.save();
-            ctx.translate(a.x, a.y);
-            ctx.drawImage(Game.apple.img, -Game.apple.img.width / 8, -Game.apple.img.height / 8, Game.apple.img.width / 4, Game.apple.img.height / 4);
-            ctx.restore();
-        });
     }
     var stats = new Stats();
     stats.setMode(0);

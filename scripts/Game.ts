@@ -8,6 +8,12 @@ class Game {
   static width: number;
   static height: number;
 
+  static wandX: number;
+  static wandY: number;
+
+  static laserX: number;
+  static laserY: number;
+
   static potter = ImageLoader.load("assets/potter.png");
   static hedgehog1 = ImageLoader.load("assets/hedgehog1.png");
   static hedgehog2 = ImageLoader.load("assets/hedgehog2.png");

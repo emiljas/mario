@@ -4,6 +4,9 @@ import Apple = require("./Apple");
 class Hedgehog {
   private ctx = Game.ctx;
   private sprite = Game.flyingHedgehog;
+  private time = 0;
+  private x0 = Game.laserX;
+  private y0 = Game.laserY;
 
   public x: number;
   public y: number;
@@ -16,6 +19,8 @@ class Hedgehog {
   }
 
   public move(): void {
+    this.time += Game.timeDiffInSeconds;
+
     if(this.hasApple()) {
       if(this.y < Game.height - Game.hedgehog1.img.height / 4) {
         this.y += 9;
@@ -34,14 +39,15 @@ class Hedgehog {
       }
     }
     else {
-      var v = 300;
+      var v = 1050;
 
       var hedgehogFromWand = v * Game.timeDiffInSeconds;
-      var hedgehogX = this.cos * hedgehogFromWand + this.x;
-      var headgehogY = this.sin * hedgehogFromWand + this.y;
+
+      var hedgehogX = this.x0 + v * this.time * this.cos;
+      var hedgehogY = this.y0 + v * this.time * this.sin + 400 * Math.pow(this.time, 2);
 
       this.x = hedgehogX;
-      this.y = headgehogY;
+      this.y = hedgehogY;
     }
   }
 

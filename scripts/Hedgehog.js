@@ -3,11 +3,15 @@ define(["require", "exports", "./Game"], function (require, exports, Game) {
         function Hedgehog() {
             this.ctx = Game.ctx;
             this.sprite = Game.flyingHedgehog;
+            this.time = 0;
+            this.x0 = Game.laserX;
+            this.y0 = Game.laserY;
         }
         Hedgehog.prototype.hasApple = function () {
             return this.apple ? true : false;
         };
         Hedgehog.prototype.move = function () {
+            this.time += Game.timeDiffInSeconds;
             if (this.hasApple()) {
                 if (this.y < Game.height - Game.hedgehog1.img.height / 4) {
                     this.y += 9;
@@ -25,12 +29,12 @@ define(["require", "exports", "./Game"], function (require, exports, Game) {
                 }
             }
             else {
-                var v = 300;
+                var v = 1050;
                 var hedgehogFromWand = v * Game.timeDiffInSeconds;
-                var hedgehogX = this.cos * hedgehogFromWand + this.x;
-                var headgehogY = this.sin * hedgehogFromWand + this.y;
+                var hedgehogX = this.x0 + v * this.time * this.cos;
+                var hedgehogY = this.y0 + v * this.time * this.sin + 400 * Math.pow(this.time, 2);
                 this.x = hedgehogX;
-                this.y = headgehogY;
+                this.y = hedgehogY;
             }
         };
         Hedgehog.prototype.draw = function () {
