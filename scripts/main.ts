@@ -1,5 +1,3 @@
-/// </// <reference path="../typings/Stats.d.ts"/>
-
 import Promise = require("bluebird");
 import Stats = require("Stats");
 import Game = require("./Game");
@@ -130,9 +128,9 @@ function gameLoop(time) {
   window.requestAnimationFrame(gameLoop);
 }
 
-function checkAppleIsTaken(hedgehog) {
+function checkAppleIsTaken(hedgehog: Hedgehog) {
   apples.every((apple, index) => {
-    if(!apple.hasHedgehog()) {
+    if(!hedgehog.hasApple() && !apple.hasHedgehog()) {
       var diff = Math.sqrt(Math.pow(apple.x - hedgehog.x, 2) + Math.pow(apple.y - hedgehog.y, 2));
 
       if(diff < Game.apple.img.width / 8 + Game.flyingHedgehog.img.width / 8) {

@@ -1,4 +1,3 @@
-/// </// <reference path="../typings/Stats.d.ts"/>
 define(["require", "exports", "Stats", "./Game", "./ImageLoader", "./Apple", "./Hedgehog"], function (require, exports, Stats, Game, ImageLoader, Apple, Hedgehog) {
     window.onerror = function (e) {
         alert(e);
@@ -90,7 +89,7 @@ define(["require", "exports", "Stats", "./Game", "./ImageLoader", "./Apple", "./
     }
     function checkAppleIsTaken(hedgehog) {
         apples.every(function (apple, index) {
-            if (!apple.hasHedgehog()) {
+            if (!hedgehog.hasApple() && !apple.hasHedgehog()) {
                 var diff = Math.sqrt(Math.pow(apple.x - hedgehog.x, 2) + Math.pow(apple.y - hedgehog.y, 2));
                 if (diff < Game.apple.img.width / 8 + Game.flyingHedgehog.img.width / 8) {
                     hedgehog.apple = apple;

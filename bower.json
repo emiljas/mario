@@ -14,6 +14,7 @@
   "dependencies": {
     "bluebird": "~2.9.25",
     "underscore": "~1.8.3",
-    "stats.js": "*"
+    "stats.js": "*",
+    "qunit": "~1.18.0"
   }
 }
