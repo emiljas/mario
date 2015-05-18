@@ -1,4 +1,17 @@
 define(["require", "exports", "./Game"], function (require, exports, Game) {
+    var PeriodExecutor = (function () {
+        function PeriodExecutor(periodTimeInMilliseconds) {
+            var actions = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                actions[_i - 1] = arguments[_i];
+            }
+            this.periodTimeInMilliseconds = periodTimeInMilliseconds;
+            this.actions = actions;
+        }
+        PeriodExecutor.prototype.execute = function (timeInMilliseconds) {
+        };
+        return PeriodExecutor;
+    })();
     var Hedgehog = (function () {
         function Hedgehog() {
             this.ctx = Game.ctx;
@@ -14,8 +27,9 @@ define(["require", "exports", "./Game"], function (require, exports, Game) {
             this.time += Game.timeDiffInSeconds;
             if (this.hasApple()) {
                 if (this.y < Game.height - Game.hedgehog1.img.height / 4) {
-                    this.y += 9;
-                    this.apple.y += 9;
+                    var verticalMove = Hedgehog.verticalV * Game.timeDiffInSeconds;
+                    this.y += verticalMove;
+                    this.apple.y += verticalMove;
                 }
                 else {
                     if (Math.floor(Game.time / 200) % 2) {
@@ -24,8 +38,9 @@ define(["require", "exports", "./Game"], function (require, exports, Game) {
                     else {
                         this.sprite = Game.hedgehog2;
                     }
-                    this.x -= 3;
-                    this.apple.x -= 3;
+                    var horizontalMove = Hedgehog.horizontalV * Game.timeDiffInSeconds;
+                    this.x -= horizontalMove;
+                    this.apple.x -= horizontalMove;
                 }
             }
             else {
@@ -46,6 +61,8 @@ define(["require", "exports", "./Game"], function (require, exports, Game) {
             this.ctx.drawImage(this.sprite.img, -this.sprite.img.width / 8, -this.sprite.img.height / 8, this.sprite.img.width / 4, this.sprite.img.height / 4);
             this.ctx.restore();
         };
+        Hedgehog.verticalV = 200;
+        Hedgehog.horizontalV = 150;
         return Hedgehog;
     })();
     return Hedgehog;

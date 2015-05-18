@@ -1,7 +1,23 @@
 import Game = require("./Game");
 import Apple = require("./Apple");
 
+class PeriodExecutor {
+  private periodTimeInMilliseconds: number;
+  private actions: any[];
+
+  constructor(periodTimeInMilliseconds: number, ...actions: any[]){
+    this.periodTimeInMilliseconds = periodTimeInMilliseconds;
+    this.actions = actions;
+  }
+
+  public execute(timeInMilliseconds): void {
+  }
+}
+
 class Hedgehog {
+  private static verticalV = 200;
+  private static horizontalV = 150;
+
   private ctx = Game.ctx;
   private sprite = Game.flyingHedgehog;
   private time = 0;
@@ -23,8 +39,9 @@ class Hedgehog {
 
     if(this.hasApple()) {
       if(this.y < Game.height - Game.hedgehog1.img.height / 4) {
-        this.y += 9;
-        this.apple.y += 9;
+        var verticalMove = Hedgehog.verticalV * Game.timeDiffInSeconds;
+        this.y += verticalMove;
+        this.apple.y += verticalMove;
       }
       else {
         if(Math.floor(Game.time / 200) % 2) {
@@ -34,8 +51,9 @@ class Hedgehog {
           this.sprite = Game.hedgehog2;
         }
 
-        this.x -= 3;
-        this.apple.x -= 3;
+        var horizontalMove = Hedgehog.horizontalV * Game.timeDiffInSeconds;
+        this.x -= horizontalMove;
+        this.apple.x -= horizontalMove;
       }
     }
     else {
