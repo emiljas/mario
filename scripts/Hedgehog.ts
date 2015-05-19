@@ -1,19 +1,6 @@
 import Game = require("./Game");
 import Apple = require("./Apple");
 
-class PeriodExecutor {
-  private periodTimeInMilliseconds: number;
-  private actions: any[];
-
-  constructor(periodTimeInMilliseconds: number, ...actions: any[]){
-    this.periodTimeInMilliseconds = periodTimeInMilliseconds;
-    this.actions = actions;
-  }
-
-  public execute(timeInMilliseconds): void {
-  }
-}
-
 class Hedgehog {
   private static verticalV = 200;
   private static horizontalV = 150;

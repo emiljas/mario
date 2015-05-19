@@ -1,17 +1,4 @@
 define(["require", "exports", "./Game"], function (require, exports, Game) {
-    var PeriodExecutor = (function () {
-        function PeriodExecutor(periodTimeInMilliseconds) {
-            var actions = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                actions[_i - 1] = arguments[_i];
-            }
-            this.periodTimeInMilliseconds = periodTimeInMilliseconds;
-            this.actions = actions;
-        }
-        PeriodExecutor.prototype.execute = function (timeInMilliseconds) {
-        };
-        return PeriodExecutor;
-    })();
     var Hedgehog = (function () {
         function Hedgehog() {
             this.ctx = Game.ctx;
