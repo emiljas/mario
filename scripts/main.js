@@ -52,10 +52,10 @@ define(["require", "exports", "Stats", "./Game", "./ImageLoader", "./Apple", "./
     var oldTime = 0;
     var laserX, laserY;
     function gameLoop(time) {
-        Game.time = time;
-        var timeDiff = time - oldTime;
-        var timeDiffInSeconds = timeDiff / 1000;
-        Game.timeDiffInSeconds = timeDiffInSeconds;
+        Game.timeInMilliseconds = time;
+        Game.timeInSeconds = Game.timeInMilliseconds / 1000;
+        Game.timeDiffInMilliseconds = time - oldTime;
+        Game.timeDiffInSeconds = Game.timeDiffInMilliseconds / 1000;
         ctx.fillStyle = "rgba(255, 255, 255, 0.0)";
         ctx.clearRect(0, 0, width, height);
         ctx.drawImage(Game.potter.img, (width - Game.potter.img.width) / 2, height - Game.potter.img.height);

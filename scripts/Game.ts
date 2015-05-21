@@ -2,7 +2,9 @@ import ImageLoader = require("./ImageLoader");
 
 class Game {
   static ctx: CanvasRenderingContext2D;
-  static time: number;
+  static timeInMilliseconds: number;
+  static timeInSeconds: number;
+  static timeDiffInMilliseconds: number;
   static timeDiffInSeconds: number;
 
   static width: number;
