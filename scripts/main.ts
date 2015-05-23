@@ -14,15 +14,11 @@ var canvas = <HTMLCanvasElement>$("#canvas");
 var ctx = canvas.getContext("2d");
 
 Game.ctx = ctx;
+Game.width = window.innerWidth;
+Game.height = window.innerHeight;
 
-var width = window.innerWidth;
-var height = window.innerHeight;
-
-Game.width = width;
-Game.height = height;
-
-canvas.width = width;
-canvas.height = height;
+canvas.width = Game.width;
+canvas.height = Game.height;
 
 var moveX = 0, moveY = 0;
 
@@ -65,8 +61,11 @@ ImageLoader.all([
   Game.flyingHedgehog, Game.apple
 ])
 .then((result) => {
-  wandX = width / 2 + wandXRelativeToPotter;
-  wandY = height - Game.potter.img.height / 2 + wandYRelativeToPotter;
+  wandX = Game.width / 2 + wandXRelativeToPotter;
+  wandY = Game.height - Game.potter.img.height / 2 + wandYRelativeToPotter;
+
+  potterX = Game.width / 2;
+  potterY = Game.height - Game.potter.height / 2;
 
   randomApples();
 
@@ -76,6 +75,7 @@ ImageLoader.all([
 var oldTime = 0;
 
 var laserX, laserY;
+var potterX, potterY;
 
 function gameLoop(time) {
   Game.timeInMilliseconds = time;
@@ -84,9 +84,12 @@ function gameLoop(time) {
   Game.timeDiffInSeconds = Game.timeDiffInMilliseconds / 1000;
 
   ctx.fillStyle = "rgba(255, 255, 255, 0.0)";
-  ctx.clearRect(0, 0, width, height);
+  ctx.clearRect(0, 0, Game.width, Game.height);
 
-  ctx.drawImage(Game.potter.img, (width - Game.potter.img.width) / 2, height - Game.potter.img.height);
+  ctx.save();
+  ctx.translate(potterX, potterY);
+  ctx.drawImage(Game.potter.offsetCanvas, Game.potter.drawingX, Game.potter.drawingY);
+  ctx.restore();
 
   var laserLength = 100;
 
@@ -134,6 +137,7 @@ function checkAppleIsTaken(hedgehog: Hedgehog) {
 
       if(diff < Game.apple.img.width / 8 + Game.flyingHedgehog.img.width / 8) {
         hedgehog.apple = apple;
+        hedgehog.isFallingDown = true;
         apple.hedgehog = hedgehog;
         return false;
       }
@@ -146,19 +150,31 @@ function checkAppleIsTaken(hedgehog: Hedgehog) {
 var apples = new Array<Apple>();
 
 function randomApples(): void {
-  for(var i = 0; i < 10; i++) {
-    var randomX = Math.random() * width;
-    var randomY = Math.random() * height / 3;
+  while(apples.length < 10) {
+    var randomX = Math.random() * (Game.width - Game.apple.width) + Game.apple.width / 2;
+    var randomY = Math.random() * Game.height / 3 + Game.apple.height / 2;
 
     var apple = new Apple();
     apple.x = randomX;
     apple.y = randomY;
-    apples.push(apple);
+
+    var isTooClose = false;
+    for(var i = 0; i < apples.length; i++) {
+      var a = apples[i];
+      var distance = Math.sqrt(Math.pow(a.x - apple.x, 2) + Math.pow(a.y - apple.y, 2));
+
+      if(distance < 2 * Game.apple.width) {
+        isTooClose = true;
+        break;
+      }
+    }
+    if(!isTooClose)
+      apples.push(apple);
   }
 }
 
 var stats = new Stats();
-stats.setMode(0); // 0: fps, 1: ms
+stats.setMode(0);
 
 stats.domElement.style.position = "absolute";
 stats.domElement.style.left = "0px";

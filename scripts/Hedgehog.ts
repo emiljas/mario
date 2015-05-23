@@ -12,14 +12,13 @@ class Hedgehog {
   private time = 0;
   private x0 = Game.laserX;
   private y0 = Game.laserY;
-  private isFallingDown = false;
+  public isFallingDown = false;
   private currentGravityRotation = 0;
 
   public x: number;
   public y: number;
   public cos: number;
   public sin: number;
-  public apple: Apple;
 
   private walking = new PeriodExecutor(200
   , () => {
@@ -29,15 +28,17 @@ class Hedgehog {
     this.sprite = Game.hedgehog2;
   });
 
+  public apple: Apple;
   public hasApple(): boolean {
-    return this.apple ? true : false;
+    return "apple" in this;
   }
 
   public move(): void {
     this.time += Game.timeDiffInSeconds;
 
     if(this.hasApple()) {
-      this.isFallingDown = this.y < Game.height - Game.hedgehog1.img.height / 4 - Game.apple.img.width / 16;
+      if(this.isFallingDown)
+        this.isFallingDown = this.y < Game.height - 2 * Game.hedgehog1.height - 2 * Game.apple.width;
       if(this.isFallingDown) {
         //falling down
         var verticalMove = Hedgehog.VerticalV * Game.timeDiffInSeconds;
@@ -46,7 +47,7 @@ class Hedgehog {
       }
       else {
         this.x = this.apple.x;
-        this.y = this.apple.y + Game.apple.img.width / 8;
+        this.y = this.apple.y + Game.apple.width / 2;
 
         //walk out of boards
         this.walking.execute(Game.timeInMilliseconds);
@@ -91,7 +92,7 @@ class Hedgehog {
     if(!this.hasApple()) {
       this.ctx.rotate(Game.timeInSeconds * 3 * 2 * Math.PI);
     }
-    this.ctx.drawImage(this.sprite.img, -this.sprite.img.width / 8, -this.sprite.img.height / 8, this.sprite.img.width / 4, this.sprite.img.height / 4);
+    this.ctx.drawImage(this.sprite.offsetCanvas, this.sprite.drawingX, this.sprite.drawingY);
     this.ctx.restore();
   }
 

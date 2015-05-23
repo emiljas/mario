@@ -16,12 +16,13 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
             });
         }
         Hedgehog.prototype.hasApple = function () {
-            return this.apple ? true : false;
+            return "apple" in this;
         };
         Hedgehog.prototype.move = function () {
             this.time += Game.timeDiffInSeconds;
             if (this.hasApple()) {
-                this.isFallingDown = this.y < Game.height - Game.hedgehog1.img.height / 4 - Game.apple.img.width / 16;
+                if (this.isFallingDown)
+                    this.isFallingDown = this.y < Game.height - 2 * Game.hedgehog1.height - 2 * Game.apple.width;
                 if (this.isFallingDown) {
                     var verticalMove = Hedgehog.VerticalV * Game.timeDiffInSeconds;
                     this.y += verticalMove;
@@ -29,7 +30,7 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
                 }
                 else {
                     this.x = this.apple.x;
-                    this.y = this.apple.y + Game.apple.img.width / 8;
+                    this.y = this.apple.y + Game.apple.width / 2;
                     this.walking.execute(Game.timeInMilliseconds);
                     var horizontalMove = Hedgehog.HorizontalV * Game.timeDiffInSeconds;
                     this.x -= horizontalMove;
@@ -64,7 +65,7 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
             if (!this.hasApple()) {
                 this.ctx.rotate(Game.timeInSeconds * 3 * 2 * Math.PI);
             }
-            this.ctx.drawImage(this.sprite.img, -this.sprite.img.width / 8, -this.sprite.img.height / 8, this.sprite.img.width / 4, this.sprite.img.height / 4);
+            this.ctx.drawImage(this.sprite.offsetCanvas, this.sprite.drawingX, this.sprite.drawingY);
             this.ctx.restore();
         };
         Hedgehog.prototype.angleRelativeToApple = function () {

@@ -16,11 +16,11 @@ class Game {
   static laserX: number;
   static laserY: number;
 
-  static potter = ImageLoader.load("assets/potter.png");
-  static hedgehog1 = ImageLoader.load("assets/hedgehog1.png");
-  static hedgehog2 = ImageLoader.load("assets/hedgehog2.png");
-  static flyingHedgehog = ImageLoader.load("assets/flyingHedgehog.png");
-  static apple = ImageLoader.load("assets/apple.png");
+  static potter = ImageLoader.load("assets/potter.png", 1);
+  static hedgehog1 = ImageLoader.load("assets/hedgehog1.png", 0.25);
+  static hedgehog2 = ImageLoader.load("assets/hedgehog2.png", 0.25);
+  static flyingHedgehog = ImageLoader.load("assets/flyingHedgehog.png", 0.25);
+  static apple = ImageLoader.load("assets/apple.png", 0.25);
 }
 
 export = Game;
