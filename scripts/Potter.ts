@@ -1,0 +1,5 @@
+class Potter {
+
+}
+
+export = Potter;

@@ -4,7 +4,7 @@ import PeriodExecutor = require("./PeriodExecutor");
 
 class Hedgehog {
   private static GravityRotationRatio = 7;
-  private static VerticalV = 20;
+  private static VerticalV = 150;
   private static HorizontalV = 150;
 
   private ctx = Game.ctx;
@@ -38,7 +38,7 @@ class Hedgehog {
 
     if(this.hasApple()) {
       if(this.isFallingDown)
-        this.isFallingDown = this.y < Game.height - 2 * Game.hedgehog1.height - 2 * Game.apple.width;
+        this.isFallingDown = this.apple.y < Game.height - Game.flyingHedgehog.height - 0.5 * Game.apple.height;
       if(this.isFallingDown) {
         //falling down
         var verticalMove = Hedgehog.VerticalV * Game.timeDiffInSeconds;
@@ -47,7 +47,7 @@ class Hedgehog {
       }
       else {
         this.x = this.apple.x;
-        this.y = this.apple.y + Game.apple.width / 2;
+        this.y = this.apple.y + Game.apple.width * 0.9;
 
         //walk out of boards
         this.walking.execute(Game.timeInMilliseconds);
@@ -59,12 +59,14 @@ class Hedgehog {
     }
     else {
       //fired
-      var v = 1000;
+      //TODO: something wrong
+      var g = 400;
+      var v = Math.sqrt(Math.sqrt(2) * Game.height * 2 * g / Math.pow(this.sin, 2));
 
       var hedgehogFromWand = v * Game.timeDiffInSeconds;
 
       var hedgehogX = this.x0 + v * this.time * this.cos;
-      var hedgehogY = this.y0 + v * this.time * this.sin + 400 * Math.pow(this.time, 2);
+      var hedgehogY = this.y0 + v * this.time * this.sin + g * Math.pow(this.time, 2);
 
       this.x = hedgehogX;
       this.y = hedgehogY;

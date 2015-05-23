@@ -18,6 +18,8 @@
         "./scripts/Hedgehog.ts",
         "./scripts/ImageLoader.ts",
         "./scripts/PeriodExecutor.ts",
+        "./scripts/Potter.ts",
+        "./scripts/ScaleType.ts",
         "./scripts/config.ts",
         "./scripts/deg2rad.ts",
         "./scripts/main.ts",

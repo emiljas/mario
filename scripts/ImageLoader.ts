@@ -1,5 +1,7 @@
 import _ = require("underscore");
 import Promise = require("bluebird");
+import Game = require("./Game");
+import ScaleType = require("./ScaleType");
 
 class ImageLoader {
   private promise: Promise<HTMLImageElement>;
@@ -10,8 +12,9 @@ class ImageLoader {
   public height: number;
   public drawingX: number;
   public drawingY: number;
+  public scaleRatio: number;
 
-  constructor(private url: string, private scale: number) {
+  constructor(private url: string, private scale: number, private scaleType?: ScaleType) {
     this.promise = this.gettingImage();
   }
 
@@ -23,8 +26,29 @@ class ImageLoader {
       this.img = new Image();
       this.img.src = this.url;
       this.img.addEventListener("load", () => {
-        this.width = this.img.width * this.scale;
-        this.height = this.img.height * this.scale;
+
+        this.width = this.img.width;
+        this.height = this.img.height;
+
+        if(this.scaleType == ScaleType.ToHeight) {
+          var height = Math.min(Game.height * this.scale, this.height);
+          var ratio = height / this.height;
+          this.width *= ratio;
+          this.height = height;
+          this.scaleRatio = ratio;
+        }
+        else if(this.scaleType == ScaleType.ToWidth) {
+          var width = Math.min(Game.width * this.scale, this.width);
+          var ratio = width / this.width;
+          this.width = width;
+          this.height *= ratio;
+          this.scaleRatio = ratio;
+        }
+        else {
+          this.width = this.img.width * this.scale;
+          this.height = this.img.height * this.scale;
+        }
+
         this.offsetCanvas.width = this.width;
         this.offsetCanvas.height = this.height;
         this.offsetCanvasCtx.drawImage(this.img, 0, 0, this.width, this.height);
@@ -37,8 +61,8 @@ class ImageLoader {
     });
   }
 
-  public static load(url: string, scale: number) {
-    return new ImageLoader(url, scale);
+  public static load(url: string, scale: number, scaleType?: ScaleType) {
+    return new ImageLoader(url, scale, scaleType);
   }
 
   public static all(loaders: ImageLoader[]) {

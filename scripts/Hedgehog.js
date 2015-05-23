@@ -22,7 +22,7 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
             this.time += Game.timeDiffInSeconds;
             if (this.hasApple()) {
                 if (this.isFallingDown)
-                    this.isFallingDown = this.y < Game.height - 2 * Game.hedgehog1.height - 2 * Game.apple.width;
+                    this.isFallingDown = this.apple.y < Game.height - Game.flyingHedgehog.height - 0.5 * Game.apple.height;
                 if (this.isFallingDown) {
                     var verticalMove = Hedgehog.VerticalV * Game.timeDiffInSeconds;
                     this.y += verticalMove;
@@ -30,7 +30,7 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
                 }
                 else {
                     this.x = this.apple.x;
-                    this.y = this.apple.y + Game.apple.width / 2;
+                    this.y = this.apple.y + Game.apple.width * 0.9;
                     this.walking.execute(Game.timeInMilliseconds);
                     var horizontalMove = Hedgehog.HorizontalV * Game.timeDiffInSeconds;
                     this.x -= horizontalMove;
@@ -38,10 +38,11 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
                 }
             }
             else {
-                var v = 1000;
+                var g = 400;
+                var v = Math.sqrt(Math.sqrt(2) * Game.height * 2 * g / Math.pow(this.sin, 2));
                 var hedgehogFromWand = v * Game.timeDiffInSeconds;
                 var hedgehogX = this.x0 + v * this.time * this.cos;
-                var hedgehogY = this.y0 + v * this.time * this.sin + 400 * Math.pow(this.time, 2);
+                var hedgehogY = this.y0 + v * this.time * this.sin + g * Math.pow(this.time, 2);
                 this.x = hedgehogX;
                 this.y = hedgehogY;
             }
@@ -86,7 +87,7 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
                 return -Math.PI + Math.atan(tan);
         };
         Hedgehog.GravityRotationRatio = 7;
-        Hedgehog.VerticalV = 20;
+        Hedgehog.VerticalV = 150;
         Hedgehog.HorizontalV = 150;
         return Hedgehog;
     })();
