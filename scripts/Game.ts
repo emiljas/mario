@@ -2,26 +2,29 @@ import ImageLoader = require("./ImageLoader");
 import ScaleType = require("./ScaleType");
 
 class Game {
-  static ctx: CanvasRenderingContext2D;
-  static timeInMilliseconds: number;
-  static timeInSeconds: number;
-  static timeDiffInMilliseconds: number;
-  static timeDiffInSeconds: number;
+  public static ctx: CanvasRenderingContext2D;
+  public static timeInMilliseconds: number;
+  public static timeInSeconds: number;
+  public static timeDiffInMilliseconds: number;
+  public static timeDiffInSeconds: number;
 
-  static width: number;
-  static height: number;
+  public static width: number;
+  public static height: number;
 
-  static wandX: number;
-  static wandY: number;
+  public static moveX: number;
+  public static moveY: number;
 
-  static laserX: number;
-  static laserY: number;
+  public static wandX: number;
+  public static wandY: number;
 
-  static potter: ImageLoader;
-  static hedgehog1: ImageLoader;
-  static hedgehog2: ImageLoader;
-  static flyingHedgehog: ImageLoader;
-  static apple: ImageLoader;
+  public static laserX: number;
+  public static laserY: number;
+
+  public static potter: ImageLoader;
+  public static hedgehog1: ImageLoader;
+  public static hedgehog2: ImageLoader;
+  public static flyingHedgehog: ImageLoader;
+  public static apple: ImageLoader;
 }
 
 export = Game;

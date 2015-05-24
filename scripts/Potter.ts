@@ -1,5 +1,4 @@
 class Potter {
-
 }
 
 export = Potter;

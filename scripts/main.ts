@@ -5,6 +5,8 @@ import ScaleType = require("./ScaleType");
 import ImageLoader = require("./ImageLoader");
 import Apple = require("./Apple");
 import Hedgehog = require("./Hedgehog");
+import Wand = require("./Wand");
+import loadAssets = require("./loadAssets");
 
 window.onerror = function(e) {
   alert(e);
@@ -12,47 +14,6 @@ window.onerror = function(e) {
 
 var $ = document.querySelector.bind(document);
 var canvas = <HTMLCanvasElement>$("#canvas");
-var ctx = canvas.getContext("2d");
-
-Game.ctx = ctx;
-Game.width = window.innerWidth;
-Game.height = window.innerHeight;
-
-Game.potter = ImageLoader.load("assets/potter.png", 0.3, ScaleType.ToHeight);
-Game.hedgehog1 = ImageLoader.load("assets/hedgehog1.png", 0.1, ScaleType.ToWidth);
-Game.hedgehog2 = ImageLoader.load("assets/hedgehog2.png", 0.1, ScaleType.ToWidth);
-Game.flyingHedgehog = ImageLoader.load("assets/flyingHedgehog.png", 0.1, ScaleType.ToWidth);
-Game.apple = ImageLoader.load("assets/apple.png", 0.1, ScaleType.ToWidth);
-
-canvas.width = Game.width;
-canvas.height = Game.height;
-
-var moveX = 0, moveY = 0;
-
-function handleMove(e) {
-  e.preventDefault();
-
-  moveX = e.clientX || (e.changedTouches && e.changedTouches[0].clientX);
-  moveY = e.clientY || (e.changedTouches && e.changedTouches[0].clientY);
-}
-
-var hedgehogs = new Array<Hedgehog>();
-
-function handleUp(e) {
-  handleMove(e);
-
-  var s = Math.sqrt(Math.pow(moveX - wandX, 2) + Math.pow(moveY - wandY, 2));
-
-  var cos = (moveX - wandX) / s;
-  var sin = (moveY - wandY) / s;
-
-  var hedgehod = new Hedgehog();
-  hedgehod.x = laserX;
-  hedgehod.y = laserY;
-  hedgehod.cos = cos;
-  hedgehod.sin = sin;
-  hedgehogs.push(hedgehod);
-}
 
 function areTouchEventsSupported() {
   try {
@@ -64,38 +25,61 @@ function areTouchEventsSupported() {
 }
 
 if(areTouchEventsSupported()) {
-  canvas.addEventListener("touchmove", handleMove, true);
-  canvas.addEventListener("touchend", handleUp, true);
+  canvas.addEventListener("touchstart", handleMove, false);
+  canvas.addEventListener("touchmove", handleMove, false);
+  canvas.addEventListener("touchend", handleUp, false);
 }
 else {
-  canvas.addEventListener("mousemove", handleMove, true);
-  canvas.addEventListener("mouseup", handleUp, true);
+  canvas.addEventListener("mousemove", handleMove, false);
+  canvas.addEventListener("mouseup", handleUp, false);
 }
 
-var wandXRelativeToPotter = -33;
-var wandYRelativeToPotter = -5;
-var wandX, wandY;
+Game.ctx = canvas.getContext("2d");
+Game.width = window.innerWidth;
+Game.height = window.innerHeight;
+canvas.width = Game.width;
+canvas.height = Game.height;
 
-var borderMargin = 2.5;
-var borderLineWidth = 5;
-var borderColor = "red";
 
-ImageLoader.all([
-  Game.potter, Game.hedgehog1, Game.hedgehog2,
-  Game.flyingHedgehog, Game.apple
-])
-.then((result) => {
-  console.log(Game.potter.scaleRatio);
-  wandX = Game.width / 2 + wandXRelativeToPotter * Game.potter.scaleRatio;
-  wandY = Game.height - Game.potter.height / 2 + wandYRelativeToPotter * Game.potter.scaleRatio;
-
+var wand;
+loadAssets().then(() => {
   potterX = Game.width / 2;
   potterY = Game.height - Game.potter.height / 2;
+
+  wand = new Wand(); //TODO: move to potter
 
   randomApples();
 
   window.requestAnimationFrame(gameLoop);
 });
+
+Game.moveX = 0;
+Game.moveY = 0;
+
+function handleMove(e) {
+  e.preventDefault();
+
+  Game.moveX = e.clientX || (e.changedTouches && e.changedTouches[0].clientX);
+  Game.moveY = e.clientY || (e.changedTouches && e.changedTouches[0].clientY);
+}
+
+var hedgehogs = new Array<Hedgehog>();
+
+function handleUp(e) {
+  handleMove(e);
+
+  var s = Math.sqrt(Math.pow(Game.moveX - wand.x, 2) + Math.pow(Game.moveY - wand.y, 2));
+
+  var cos = (Game.moveX - wand.x) / s;
+  var sin = (Game.moveY - wand.y) / s;
+
+  var hedgehod = new Hedgehog();
+  hedgehod.x = laserX;
+  hedgehod.y = laserY;
+  hedgehod.cos = cos;
+  hedgehod.sin = sin;
+  hedgehogs.push(hedgehod);
+}
 
 var oldTime = 0;
 
@@ -108,37 +92,15 @@ function gameLoop(time) {
   Game.timeDiffInMilliseconds = time - oldTime;
   Game.timeDiffInSeconds = Game.timeDiffInMilliseconds / 1000;
 
-  ctx.fillStyle = "rgba(255, 255, 255, 0.0)";
-  ctx.clearRect(0, 0, Game.width, Game.height);
+  Game.ctx.fillStyle = "rgba(255, 255, 255, 0.0)";
+  Game.ctx.clearRect(0, 0, Game.width, Game.height);
 
-  ctx.save();
-  ctx.translate(potterX, potterY);
-  ctx.drawImage(Game.potter.offsetCanvas, Game.potter.drawingX, Game.potter.drawingY);
-  ctx.restore();
+  Game.ctx.save();
+  Game.ctx.translate(potterX, potterY);
+  Game.ctx.drawImage(Game.potter.offsetCanvas, Game.potter.drawingX, Game.potter.drawingY);
+  Game.ctx.restore();
 
-  var laserLength = Game.potter.height * 0.75;
-
-  function drawLaser() {
-    var s = Math.sqrt(Math.pow(moveX - wandX, 2) + Math.pow(moveY - wandY, 2));
-
-    var cos = (moveX - wandX) / s;
-    var sin = (moveY - wandY) / s;
-
-    laserX = cos * laserLength + wandX;
-    laserY = sin * laserLength + wandY;
-
-    Game.laserX = laserX;
-    Game.laserY = laserY;
-
-    ctx.lineWidth = borderLineWidth;
-    ctx.strokeStyle = borderColor;
-
-    ctx.beginPath();
-    ctx.moveTo(wandX, wandY);
-    ctx.lineTo(laserX, laserY);
-    ctx.stroke();
-  }
-  drawLaser();
+  wand.drawLaser();
 
   hedgehogs.forEach((hedgehog) => {
     checkAppleIsTaken(hedgehog);
