@@ -1,5 +1,4 @@
-import ImageLoader = require("./ImageLoader");
-import ScaleType = require("./ScaleType");
+import Assets = require("./Assets");
 
 class Game {
   public static ctx: CanvasRenderingContext2D;
@@ -20,11 +19,7 @@ class Game {
   public static laserX: number;
   public static laserY: number;
 
-  public static potter: ImageLoader;
-  public static hedgehog1: ImageLoader;
-  public static hedgehog2: ImageLoader;
-  public static flyingHedgehog: ImageLoader;
-  public static apple: ImageLoader;
+  public static assets = new Assets();
 }
 
 export = Game;

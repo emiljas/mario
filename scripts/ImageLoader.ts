@@ -4,7 +4,7 @@ import Game = require("./Game");
 import ScaleType = require("./ScaleType");
 
 class ImageLoader {
-  private promise: Promise<HTMLImageElement>;
+  public promise: Promise<HTMLImageElement>;
   public img: HTMLImageElement;
   public offsetCanvas: HTMLCanvasElement;
   public offsetCanvasCtx: CanvasRenderingContext2D;
@@ -63,13 +63,6 @@ class ImageLoader {
 
   public static load(url: string, scale: number, scaleType?: ScaleType) {
     return new ImageLoader(url, scale, scaleType);
-  }
-
-  public static all(loaders: ImageLoader[]) {
-    var promises = _.map(loaders, (loader) => {
-      return loader.promise;
-    })
-    return Promise.all(promises);
   }
 }
 

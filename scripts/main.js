@@ -1,6 +1,6 @@
-define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Wand", "./loadAssets"], function (require, exports, Stats, Game, Apple, Hedgehog, Wand, loadAssets) {
-    window.onerror = function (e) {
-        alert(e);
+define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Potter", "./Wand", "./loadAssets"], function (require, exports, Stats, Game, Apple, Hedgehog, Potter, Wand, loadAssets) {
+    window.onerror = function (e, f, c) {
+        alert(e + " " + f + " " + c);
     };
     var $ = document.querySelector.bind(document);
     var canvas = $("#canvas");
@@ -27,10 +27,9 @@ define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Wan
     Game.height = window.innerHeight;
     canvas.width = Game.width;
     canvas.height = Game.height;
-    var wand;
+    var potter, wand;
     loadAssets().then(function () {
-        potterX = Game.width / 2;
-        potterY = Game.height - Game.potter.height / 2;
+        potter = new Potter();
         wand = new Wand();
         randomApples();
         window.requestAnimationFrame(gameLoop);
@@ -54,6 +53,7 @@ define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Wan
         hedgehod.cos = cos;
         hedgehod.sin = sin;
         hedgehogs.push(hedgehod);
+        Game.assets.wandSound.play();
     }
     var oldTime = 0;
     var laserX, laserY;
@@ -65,10 +65,7 @@ define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Wan
         Game.timeDiffInSeconds = Game.timeDiffInMilliseconds / 1000;
         Game.ctx.fillStyle = "rgba(255, 255, 255, 0.0)";
         Game.ctx.clearRect(0, 0, Game.width, Game.height);
-        Game.ctx.save();
-        Game.ctx.translate(potterX, potterY);
-        Game.ctx.drawImage(Game.potter.offsetCanvas, Game.potter.drawingX, Game.potter.drawingY);
-        Game.ctx.restore();
+        potter.draw();
         wand.drawLaser();
         hedgehogs.forEach(function (hedgehog) {
             checkAppleIsTaken(hedgehog);
@@ -85,7 +82,7 @@ define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Wan
         apples.every(function (apple, index) {
             if (!hedgehog.hasApple() && !apple.hasHedgehog()) {
                 var diff = Math.sqrt(Math.pow(apple.x - hedgehog.x, 2) + Math.pow(apple.y - hedgehog.y, 2));
-                if (diff < Game.apple.width / 2 + Game.flyingHedgehog.width / 2) {
+                if (diff < Game.assets.appleSprite.width / 2 + Game.assets.flyingHedgehogSprite.width / 2) {
                     hedgehog.apple = apple;
                     hedgehog.isFallingDown = true;
                     apple.hedgehog = hedgehog;
@@ -97,11 +94,11 @@ define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Wan
     }
     var apples = new Array();
     function randomApples() {
-        var limit = 1000;
+        var limit = 100;
         var randomAttempts = 0;
-        while (apples.length < 100) {
-            var randomX = Math.random() * (Game.width - Game.apple.width) + Game.apple.width / 2;
-            var randomY = Math.random() * Game.height / 2 + Game.apple.height / 2;
+        while (apples.length < 50) {
+            var randomX = Math.random() * (Game.width - Game.assets.appleSprite.width) + Game.assets.appleSprite.width / 2;
+            var randomY = Math.random() * Game.height / 2.5 + Game.assets.appleSprite.height / 2;
             var apple = new Apple();
             apple.x = randomX;
             apple.y = randomY;
@@ -109,7 +106,7 @@ define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Wan
             for (var i = 0; i < apples.length; i++) {
                 var a = apples[i];
                 var distance = Math.sqrt(Math.pow(a.x - apple.x, 2) + Math.pow(a.y - apple.y, 2));
-                if (distance < 2 * Game.apple.width) {
+                if (distance < 2 * Game.assets.appleSprite.width) {
                     isTooClose = true;
                     break;
                 }

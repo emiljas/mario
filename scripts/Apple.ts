@@ -13,7 +13,8 @@ class Apple {
   public draw(): void {
     Game.ctx.save();
     Game.ctx.translate(this.x, this.y);
-    Game.ctx.drawImage(Game.apple.offsetCanvas, Game.apple.drawingX, Game.apple.drawingY);
+    var sprite = Game.assets.appleSprite;
+    Game.ctx.drawImage(sprite.offsetCanvas, sprite.drawingX, sprite.drawingY);
     Game.ctx.restore();
   }
 }

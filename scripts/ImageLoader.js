@@ -1,4 +1,4 @@
-define(["require", "exports", "underscore", "bluebird", "./Game", "./ScaleType"], function (require, exports, _, Promise, Game, ScaleType) {
+define(["require", "exports", "bluebird", "./Game", "./ScaleType"], function (require, exports, Promise, Game, ScaleType) {
     var ImageLoader = (function () {
         function ImageLoader(url, scale, scaleType) {
             this.url = url;
@@ -45,12 +45,6 @@ define(["require", "exports", "underscore", "bluebird", "./Game", "./ScaleType"]
         };
         ImageLoader.load = function (url, scale, scaleType) {
             return new ImageLoader(url, scale, scaleType);
-        };
-        ImageLoader.all = function (loaders) {
-            var promises = _.map(loaders, function (loader) {
-                return loader.promise;
-            });
-            return Promise.all(promises);
         };
         return ImageLoader;
     })();

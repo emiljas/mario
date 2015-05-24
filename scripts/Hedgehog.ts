@@ -8,7 +8,7 @@ class Hedgehog {
   private static HorizontalV = 150;
 
   private ctx = Game.ctx;
-  private sprite = Game.flyingHedgehog;
+  private sprite = Game.assets.flyingHedgehogSprite;
   private time = 0;
   private x0 = Game.laserX;
   private y0 = Game.laserY;
@@ -22,10 +22,12 @@ class Hedgehog {
 
   private walking = new PeriodExecutor(200
   , () => {
-    this.sprite = Game.hedgehog1;
+    this.sprite = Game.assets.hedgehog1Sprite;
+    Game.assets.hedgehogStep1Sound.play();
   }
   , () => {
-    this.sprite = Game.hedgehog2;
+    this.sprite = Game.assets.hedgehog2Sprite;
+    Game.assets.hedgehogStep2Sound.play();
   });
 
   public apple: Apple;
@@ -38,7 +40,7 @@ class Hedgehog {
 
     if(this.hasApple()) {
       if(this.isFallingDown)
-        this.isFallingDown = this.apple.y < Game.height - Game.flyingHedgehog.height - 0.5 * Game.apple.height;
+        this.isFallingDown = this.apple.y < Game.height - Game.assets.flyingHedgehogSprite.height - 0.5 * Game.assets.appleSprite.height;
       if(this.isFallingDown) {
         //falling down
         var verticalMove = Hedgehog.VerticalV * Game.timeDiffInSeconds;
@@ -47,7 +49,7 @@ class Hedgehog {
       }
       else {
         this.x = this.apple.x;
-        this.y = this.apple.y + Game.apple.width * 0.9;
+        this.y = this.apple.y + Game.assets.appleSprite.width * 0.9;
 
         //walk out of boards
         this.walking.execute(Game.timeInMilliseconds);

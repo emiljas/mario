@@ -6,15 +6,15 @@ define(["require", "exports", "./Game"], function (require, exports, Game) {
         }
         Wand.prototype.calculateX = function () {
             return Game.width / 2 +
-                Wand.xRelativeToPotter * Game.potter.scaleRatio;
+                Wand.xRelativeToPotter * Game.assets.potterSprite.scaleRatio;
         };
         Wand.prototype.calculateY = function () {
             return Game.height -
-                Game.potter.height / 2 +
-                Wand.yRelativeToPotter * Game.potter.scaleRatio;
+                Game.assets.potterSprite.height / 2 +
+                Wand.yRelativeToPotter * Game.assets.potterSprite.scaleRatio;
         };
         Wand.prototype.drawLaser = function () {
-            var laserLength = Game.potter.height * 0.75;
+            var laserLength = Game.assets.potterSprite.height * 0.75;
             var borderMargin = 2.5;
             var borderLineWidth = 5;
             var borderColor = "red";

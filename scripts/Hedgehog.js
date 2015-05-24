@@ -3,16 +3,18 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
         function Hedgehog() {
             var _this = this;
             this.ctx = Game.ctx;
-            this.sprite = Game.flyingHedgehog;
+            this.sprite = Game.assets.flyingHedgehogSprite;
             this.time = 0;
             this.x0 = Game.laserX;
             this.y0 = Game.laserY;
             this.isFallingDown = false;
             this.currentGravityRotation = 0;
             this.walking = new PeriodExecutor(200, function () {
-                _this.sprite = Game.hedgehog1;
+                _this.sprite = Game.assets.hedgehog1Sprite;
+                Game.assets.hedgehogStep1Sound.play();
             }, function () {
-                _this.sprite = Game.hedgehog2;
+                _this.sprite = Game.assets.hedgehog2Sprite;
+                Game.assets.hedgehogStep2Sound.play();
             });
         }
         Hedgehog.prototype.hasApple = function () {
@@ -22,7 +24,7 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
             this.time += Game.timeDiffInSeconds;
             if (this.hasApple()) {
                 if (this.isFallingDown)
-                    this.isFallingDown = this.apple.y < Game.height - Game.flyingHedgehog.height - 0.5 * Game.apple.height;
+                    this.isFallingDown = this.apple.y < Game.height - Game.assets.flyingHedgehogSprite.height - 0.5 * Game.assets.appleSprite.height;
                 if (this.isFallingDown) {
                     var verticalMove = Hedgehog.VerticalV * Game.timeDiffInSeconds;
                     this.y += verticalMove;
@@ -30,7 +32,7 @@ define(["require", "exports", "./Game", "./PeriodExecutor"], function (require, 
                 }
                 else {
                     this.x = this.apple.x;
-                    this.y = this.apple.y + Game.apple.width * 0.9;
+                    this.y = this.apple.y + Game.assets.appleSprite.width * 0.9;
                     this.walking.execute(Game.timeInMilliseconds);
                     var horizontalMove = Hedgehog.HorizontalV * Game.timeDiffInSeconds;
                     this.x -= horizontalMove;
