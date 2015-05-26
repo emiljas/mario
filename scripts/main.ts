@@ -9,6 +9,7 @@ import Potter = require("./Potter");
 import Wand = require("./Wand");
 import loadAssets = require("./loadAssets");
 
+
 window.onerror = function(e, f, c) {
   alert(e + " " + f + " " + c);
 };
@@ -80,6 +81,14 @@ function handleUp(e) {
   hedgehogs.push(hedgehod);
 
   Game.assets.wandSound.play();
+
+  /*
+  setTimeout(function() { Game.assets.hedgehogStep1Sound.play(); }, 50);
+  setTimeout(function() { Game.assets.hedgehogStep1Sound.play(); }, 100);
+  setTimeout(function() { Game.assets.hedgehogStep1Sound.play(); }, 150);
+  setTimeout(function() { Game.assets.hedgehogStep1Sound.play(); }, 200);
+  setTimeout(function() { Game.assets.hedgehogStep1Sound.play(); }, 250);
+  */
 }
 
 var oldTime = 0;
@@ -165,19 +174,19 @@ function randomApples(): void {
   }
 }
 
-var stats = new Stats();
-stats.setMode(0);
-
-stats.domElement.style.position = "absolute";
-stats.domElement.style.left = "0px";
-stats.domElement.style.top = "0px";
-
-document.body.appendChild( stats.domElement );
-
-var update = function () {
-    stats.begin();
-    stats.end();
-    requestAnimationFrame( update );
-};
-
-requestAnimationFrame( update );
+// var stats = new Stats();
+// stats.setMode(0);
+//
+// stats.domElement.style.position = "absolute";
+// stats.domElement.style.left = "0px";
+// stats.domElement.style.top = "0px";
+//
+// document.body.appendChild( stats.domElement );
+//
+// var update = function () {
+//     stats.begin();
+//     stats.end();
+//     requestAnimationFrame( update );
+// };
+//
+// requestAnimationFrame( update );

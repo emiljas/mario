@@ -1,4 +1,4 @@
-define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Potter", "./Wand", "./loadAssets"], function (require, exports, Stats, Game, Apple, Hedgehog, Potter, Wand, loadAssets) {
+define(["require", "exports", "./Game", "./Apple", "./Hedgehog", "./Potter", "./Wand", "./loadAssets"], function (require, exports, Game, Apple, Hedgehog, Potter, Wand, loadAssets) {
     window.onerror = function (e, f, c) {
         alert(e + " " + f + " " + c);
     };
@@ -118,16 +118,4 @@ define(["require", "exports", "Stats", "./Game", "./Apple", "./Hedgehog", "./Pot
             randomAttempts++;
         }
     }
-    var stats = new Stats();
-    stats.setMode(0);
-    stats.domElement.style.position = "absolute";
-    stats.domElement.style.left = "0px";
-    stats.domElement.style.top = "0px";
-    document.body.appendChild(stats.domElement);
-    var update = function () {
-        stats.begin();
-        stats.end();
-        requestAnimationFrame(update);
-    };
-    requestAnimationFrame(update);
 });

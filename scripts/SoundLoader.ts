@@ -4,9 +4,9 @@ import SoundLoaderByAudioTag = require("./SoundLoaderByAudioTag");
 
 class SoundLoader {
   public static load(url: string): ISoundLoader {
-    // if(SoundLoaderByWebAudioApi.isSupported())
-    //   return SoundLoaderByWebAudioApi.load(url);
-    // else
+    if(SoundLoaderByWebAudioApi.isSupported())
+      return SoundLoaderByWebAudioApi.load(url);
+    else
       return SoundLoaderByAudioTag.load(url);
   }
 }

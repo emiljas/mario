@@ -16,6 +16,7 @@ define(["require", "exports", "bluebird"], function (require, exports, Promise) 
             var _this = this;
             return new Promise(function (resolve) {
                 var sound = new Audio(_this.url);
+                sound.load();
                 sound.preload = "auto";
                 sound.volume = 0.2;
                 _this.soundsPool.push(sound);

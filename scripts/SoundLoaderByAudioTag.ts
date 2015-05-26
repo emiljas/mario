@@ -23,6 +23,7 @@ class SoundLoaderByAudioTag implements ISoundLoader {
   private loadingSoundToPool(): Promise<void> {
     return new Promise<void>((resolve: () => void) => {
       var sound = new Audio(this.url);
+      sound.load();
       sound.preload = "auto";
       sound.volume = 0.2;
       this.soundsPool.push(sound)

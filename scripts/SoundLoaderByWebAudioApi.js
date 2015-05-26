@@ -7,7 +7,7 @@ define(["require", "exports"], function (require, exports) {
         }
         SoundLoaderByWebAudioApi.isSupported = function () {
             this.loadAudioContext();
-            return "AudioContext" in window || "webkitAudioContext" in window;
+            return "AudioContext" in window || "webkitAudioContext" in window || "mozAudioContext" in window;
         };
         SoundLoaderByWebAudioApi.loadAudioContext = function () {
             if (!SoundLoaderByWebAudioApi.audioContext) {
@@ -15,6 +15,8 @@ define(["require", "exports"], function (require, exports) {
                     SoundLoaderByWebAudioApi.audioContext = new AudioContext();
                 else if ("webkitAudioContext" in window)
                     SoundLoaderByWebAudioApi.audioContext = new window["webkitAudioContext"]();
+                else if ("mozAudioContext" in window)
+                    SoundLoaderByWebAudioApi.audioContext = new window["mozAudioContext"]();
             }
         };
         SoundLoaderByWebAudioApi.prototype.gettingSound = function () {

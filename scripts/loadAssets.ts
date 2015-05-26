@@ -11,9 +11,9 @@ function loadAssets(): Promise<any> {
   Game.assets.flyingHedgehogSprite = ImageLoader.load("assets/flyingHedgehog.png", 0.1, ScaleType.ToWidth);
   Game.assets.appleSprite = ImageLoader.load("assets/apple.png", 0.1, ScaleType.ToWidth);
 
-  Game.assets.wandSound = SoundLoader.load("assets/wand.mp3");
-  Game.assets.hedgehogStep1Sound = SoundLoader.load("assets/step1.mp3");
-  Game.assets.hedgehogStep2Sound = SoundLoader.load("assets/step2.mp3");
+  Game.assets.wandSound = SoundLoader.load("assets/wand.m4a");
+  Game.assets.hedgehogStep1Sound = SoundLoader.load("assets/step1.m4a");
+  Game.assets.hedgehogStep2Sound = SoundLoader.load("assets/step2.m4a");
 
   return Promise.all([
     Game.assets.potterSprite.promise,

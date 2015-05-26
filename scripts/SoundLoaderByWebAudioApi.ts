@@ -5,7 +5,7 @@ class SoundLoaderByWebAudioApi implements ISoundLoader {
 
   public static isSupported(): boolean {
     this.loadAudioContext();
-    return "AudioContext" in window || "webkitAudioContext" in window;
+    return "AudioContext" in window || "webkitAudioContext" in window || "mozAudioContext" in window;
   }
 
   public promise: Promise<any>;
@@ -22,6 +22,8 @@ class SoundLoaderByWebAudioApi implements ISoundLoader {
         SoundLoaderByWebAudioApi.audioContext = new AudioContext();
       else if("webkitAudioContext" in window)
         SoundLoaderByWebAudioApi.audioContext = new window["webkitAudioContext"]();
+      else if("mozAudioContext" in window)
+        SoundLoaderByWebAudioApi.audioContext = new window["mozAudioContext"]();
     }
   }
 
